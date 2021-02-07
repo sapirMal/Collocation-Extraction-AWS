@@ -1,0 +1,16 @@
+Logs aws locations:
+Step 1:
+https://dsps192ass2-sy.s3-us-west-2.amazonaws.com/logs/j-1EP2PQ1M0Q39T/hadoop-mapreduce/history/2019/07/22/000000/job_1563823202513_0001-1563823335983-hadoop-%2BStep%2B1-1563824288000-613-75-SUCCEEDED-default-1563823345838.jhist.gz
+Step 2:
+https://dsps192ass2-sy.s3-us-west-2.amazonaws.com/logs/j-1EP2PQ1M0Q39T/hadoop-mapreduce/history/2019/07/22/000000/job_1563823202513_0002-1563824301687-hadoop-%2BStep%2B2-1563826095465-302-75-SUCCEEDED-default-1563824310163.jhist.gz
+Step 3: 
+https://dsps192ass2-sy.s3-us-west-2.amazonaws.com/logs/j-1EP2PQ1M0Q39T/hadoop-mapreduce/history/2019/07/22/000000/job_1563823202513_0003-1563826108572-hadoop-%2BStep%2B3-1563827505467-988-75-SUCCEEDED-default-1563826119220.jhist.gz
+Step 4:
+https://dsps192ass2-sy.s3-us-west-2.amazonaws.com/logs/j-1EP2PQ1M0Q39T/hadoop-mapreduce/history/2019/07/22/000000/job_1563823202513_0004-1563827517726-hadoop-%2BStep%2B4-1563828920085-924-75-SUCCEEDED-default-1563827526808.jhist.gz
+Step 5:
+https://dsps192ass2-sy.s3-us-west-2.amazonaws.com/logs/j-1EP2PQ1M0Q39T/hadoop-mapreduce/history/2019/07/22/000000/job_1563823202513_0005-1563828932607-hadoop-%2BStep%2B5-1563831195965-437-75-SUCCEEDED-default-1563828941273.jhist.gz
+Step 6:
+https://dsps192ass2-sy.s3-us-west-2.amazonaws.com/logs/j-1EP2PQ1M0Q39T/hadoop-mapreduce/history/2019/07/22/000000/job_1563823202513_0006-1563831207137-hadoop-%2BStep%2B6-1563832931816-437-75-SUCCEEDED-default-1563831223066.jhist.gz
+
+If you are familiar with the logs hierarchy and looking for a specific one, the following address gets you to the cluster's main log directory:
+https://dsps192ass2-sy.s3-us-west-2.amazonaws.com/logs/j-1L95F61Y6J7AR/

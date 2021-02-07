@@ -1,0 +1,108 @@
+Submitters:
+
+1. Sapir malatzky
+2. Yonatan Nagar
+
+Full outputs of the run could be found at: (parameters- minPmi = 0.5, relMinPmi = 0.2)
+https://dsps192ass2-sy.s3-us-west-2.amazonaws.com/output/bca0c5ba-3fbc-4763-b062-1c72cb71391d-6/part-r-00000
+(Files part-r-00000 to part-r-00074, some of which are empty)
+
+How to run - run the following commands from the terminal (or change them to run inside an aws s3 instance to avoid downloading the jar file)
+wget https://dsps192ass2-sy.s3-us-west-2.amazonaws.com/jars/ExtractCollations.jar
+java -jar ExtractCollations.jar <minPMI> <relMinPMI>
+
+You will then get an address in s3 where the output files will appear once the task has been completed.
+Notice: the inputs <minPMI> and <relMinPMI> are neccesary in order to run the program and it will not start unless specified.
+
+Steps and information:
+
+First of all we'll make some assignments for future references:
+let O - Omega be: the largest char that can be represented (it has no ascii representation but it is the highest value a char can theoretically have) 
+let . - Dot be: . - a char that is smaller in value than a-z, A-Z, 0-9.
+We will use Omega and Dot to "control" the order of K-V pairs.
+
+We divided the program into 6 steps of M-R applications:
+
+Step 1: Input reading and summing of K-V's.
+
+The mapper creates the K-V pairs in the format of: 
+Key 		 : Value
+decade w1 w2 : n
+Where decade is calculated as year/10 and n is taken straight from the data-set.
+
+The reducer sums K-v1, v2, ... and generates a unique K-V pair in the format of:
+Key			 : Value
+decade w1 w2 : n
+
+Step 2: Generates the neccesary pairs in order to be able to compute the equations.
+
+The mapper creates 6 K-V pairs for each K-V as specified below:
+for (decade w1 w2 : n)
+Key			 : Value
+decade w1 1  : n
+decade w2 2  : n
+decade w1 1  : w1 w2
+decade w2 2  : w1 w2
+decade w1 w2 : n
+decade O  O  : n
+
+The reducer recieves the pairs and sends them forward, incase of O which represents the end of the decade it sums the 
+total number of words in the decade, and sends it as:
+decade .  .  : N 
+where N represents the sum of all the word bi-grams in a decade.
+
+Step 3: Fixes the K-V pairs with additional needed information for the computation.
+
+The mapper adds a char to the key to control the order: 'a' or '0' and sends the K-V pairs to the reducer.
+
+The reducer gets the K-V pairs in the following order and performs the action written after the -.
+key 		 : Value 	- Action
+decade .  .  : N   		- Write to context as is
+decade w1 1  : n 		- Save local x1 = n
+decade w1 1  : w1 w2 	- Writes into context: <decade w1 w2 : 1 x1>
+decade w2 2  : n 		- Save local x2 = n
+decade w2 2  : w1 w2	- Writes into context: <decade w1 w2 : 2 x2>
+decade w1 w2 : n 		- Writes into context: <decade w1 w2 : 0 n>
+
+In this way we get c(w1) and c(w2) before c(w1w2) in order to do the computation.
+
+Step 4: For each K-V calculates npmi and checks for the 1st criteria.
+
+The mapper passes the K-V pairs to the reducer.
+
+The reducer does the computation for npmi(w1, w2) as specified at the assignment instructions.
+It then checks whether: npmi(w1, w2) < minPmi (user defined value) ?
+	if true:  Generates the pair: <decade w1 w2 1 : npmi>
+	if false: Generates the pair: <decade w1 w2 0 : npmi>
+	*It adds the 1/0 tag to know whether it meets the criteria.
+Either way it sums the npmi values (for the current decade). 
+At the end of the decade it sends sumNpmi as <decade .  . : sumNpmi>
+
+Step 5: For each K-V that did not meet the 1st criteria, checks for the 2nd.
+
+The mapper passes the K-V pairs to the reducer.
+
+The reducer now checks for the 2nd condition as specified in the assignment instructions.
+First it saves locally 1 variable - the sumNpmi for a given decade, then over the whole decade it checks for each key
+if it meets the criteria it passes it on, if it does not it will do the computation and check for the 2nd condition as stated,
+if it meets the 2nd criteria it passes it on as success bit (0 turned into 1), if it does not, sends the K-V as is.
+
+Step 6: Filter out K-V pairs that did not meet the requirements and sort it by: decades -> npmi descending order.
+(2 operations: value to key and key to value of some sort)
+
+The mapper recieves a K-V pair in the form of:
+key 		 	 : Value
+decade w1 w2 1/0 : npmi
+disregards those that did not meet the requirements (0) and generates and passes the following:
+decades 	npmi : w1 w2
+
+The reducer orginizes back into K-V pair in the form of:
+decade w1 w2 	: npmi
+
+* There is a hidden sort phase between the mapper and the reducer, for it we implemented a comparator to allow us sorting by:
+compare(a, b):
+	if a.decade != b.decade
+		return a.decade - b.decade
+	else 
+		return b.npmi - a.npmi
+to allow us to sort by decade and inside each decade in a descending order by the npmi values.

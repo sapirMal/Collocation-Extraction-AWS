@@ -1,0 +1,32 @@
+Examples:
+
+10 good examples:
+
+Decade	w1			w2			npmi
+161 	this 		book		0.8406108505473829
+161 	was 		One			0.8406108505473829
+161 	was 		call		0.8406108505473829
+161 	was 		borne		0.8406108505473829
+161 	wrong 		God			0.8406108505473829
+161 	hall 		haue		0.8307172447119472
+161 	two 		gallant		0.8227900201140542
+161 	fir 		ft			0.7988732864277922
+161		or 			commodities	0.7988732864277922
+161 	Hand 		came		0.7988732864277922
+161 	That 		euery		0.7988732864277922
+
+10 bad examples:
+Decade	w1			w2			npmi
+160 	- 			window 		NaN
+160 	- 			wise 		NaN
+160 	- 			worm's 		NaN
+160 	- 			worms 		NaN
+160 	- 			• 			NaN
+160 	. 			! 			NaN
+160 	. 			$ 			NaN
+160 	. 			' 			NaN
+160 	. 			( 			NaN
+160 	. 			) 			NaN
+160 	. 			- 			NaN
+
+NaN is Not a Number, a value given to an npmi calculation if there is an illegal division by 0, which can be caused by the transformation to the pmi(w1, w2) part of the equation (from division to log based function).
